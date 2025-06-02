@@ -359,6 +359,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                 </div>
 
                 <textarea id="dataArea" class="pink portal"></textarea>
+                <p id="dataAreaInfo" class="errorInfo"></p>
             </section>
             <section id="qrCodeSection">
                 <div class="btnCenteringForce">

@@ -117,7 +117,7 @@ function updtLang() {
     document.getElementById("lButton").innerHTML = localSettings.lang == "fr" ? "Recevoir" : "Load";
     document.getElementById("sButton").innerHTML = localSettings.lang == "fr" ? "Envoyer" : "Store";
     document.getElementById("openAButton").innerHTML = localSettings.lang == "fr" ? "Ouvrir une zone" : "Open area";
-    document.getElementById("createAButton").innerHTML = localSettings.lang == "fr" ? "Créer une zone" : "Open area";
+    document.getElementById("createAButton").innerHTML = localSettings.lang == "fr" ? "Créer une zone" : "Create area";
     document.getElementById("bottomTerms").innerHTML = localSettings.lang == "fr" ? "Conditions Générales d'Utilisation" : "Terms Of Use";
     document.getElementById("bottomPrivacy").innerHTML = localSettings.lang == "fr" ? "Politique de confidentialité" : "Privacy Policy";
 

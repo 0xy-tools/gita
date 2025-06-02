@@ -26,7 +26,7 @@ function encodeHTMLEntities(text) {
 // COMMINUCATION FUNCTIONS
 
 const regex = /^[a-z]{1,6}\-[a-z]{1,6}\-[a-z]{1,6}$/;
-let lastDataStringRequest = "";
+// let lastDataStringRequest = "";
 let lastAreaRequest = "";
 let lastCode = "";
 const INPUT_MAX_LENGTH = MAX_LENGTH;
@@ -77,7 +77,8 @@ function chunkString(inputString, maxLength) {
 function showQRcode(obj, rawValue, isCode = false) {
     let value = decodeHTMLEntities(rawValue);
     // console.log(value);
-    obj.value = value;
+    if (obj != null)
+        obj.value = value;
     lastCode = value;
     // navigator.clipboard.writeText(value);
     if (isCode) {
@@ -88,7 +89,7 @@ function showQRcode(obj, rawValue, isCode = false) {
     }
 }
 
-function getCodeFromGITA(ret, mode, lang = 'en') {
+function createCodeFromGITA(ret, mode, lang = 'en') {
     // if (content == lastStringRequest) ret.value = lastCode;
     if (mode == '') setError("dataArea", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
     if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("dataArea", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
@@ -118,8 +119,8 @@ function getCodeFromGITA(ret, mode, lang = 'en') {
 
 }
 
-function getClipboardFromGITA(ret, code) {
-    if (code == '' || regex.test(code) == false) return setError("codeInputInfo", `"${code}" ${localSettings.lang == "fr" ? "ne ressemble pas à un code valide" : "doesn't look like a valid code"}`);
+function pullFromGITA(ret, code) {
+    if (code == '' || regex.test(code) == false) return setError("areaInputInfo", `"${code}" ${localSettings.lang == "fr" ? "ne ressemble pas à un code valide" : "doesn't look like a valid code"}`);
 
     fetch(`./index.php`, {
         method: 'POST',
@@ -127,14 +128,39 @@ function getClipboardFromGITA(ret, code) {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-            'p': code
+            'pull': code
         })
     })
         .then(response => response.text())
         .then(text => {
             // console.log(response);
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-            //TODO: SOMETHING
+            //: SOMETHING
+            ret.value = text.startsWith("\n") ? text.slice(1) : text;
+            document.getElementById("dataArea").style.transform = "scale(1)";
+        })
+        .catch(error => console.error('Error:', error));
+
+}
+
+function pushToGITA(ret, area, content) {
+    if (content == '' || content.length > MAX_LENGTH) return setError("dataAreaInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
+
+    fetch(`./index.php`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'a': area,
+            'push': content
+        })
+    })
+        .then(response => response.text())
+        .then(text => {
+            // console.log(response);
+            // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
+            //TODO: SOMETHING like an animation to tell it is updated
         })
         .catch(error => console.error('Error:', error));
 
@@ -152,7 +178,7 @@ function openFromGITA(ret, areaCode, lang = 'en') {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-            'l': lang,
+            // 'l': lang,
             'pull': areaCode
             // ,
             // 'm': `post;${localSettings.const ? "const" : ""}`
@@ -173,10 +199,10 @@ document.getElementById("qrGenButton").style.transform = "scale(0)";
 
 // COPY PASTE BUTTONS
 
-document.getElementById("openAButton").addEventListener("click", () => { getEasyFromGITA(document.getElementById("dataArea"), urlEncode(document.getElementById("areaInput").value), localSettings.lang); });
-document.getElementById("cButton").addEventListener("click", () => { getCodeFromGITA(document.getElementById("codeInput"), localSettings.lang) });
-document.getElementById("lButton").addEventListener("click", () => { getClipboardFromGITA(document.getElementById("dataInput"), document.getElementById("codeInput").value) });
-document.getElementById("sButton").addEventListener("click", () => { getClipboardFromGITA(document.getElementById("dataInput"), document.getElementById("codeInput").value) });
+document.getElementById("openAButton").addEventListener("click", () => { openFromGITA(document.getElementById("dataArea"), urlEncode(document.getElementById("areaInput").value), localSettings.lang); });
+document.getElementById("createAButton").addEventListener("click", () => { createCodeFromGITA(document.getElementById("areaInput"), localSettings.lang) });
+document.getElementById("lButton").addEventListener("click", () => { pullFromGITA(document.getElementById("dataArea"), document.getElementById("areaInput").value) });
+document.getElementById("sButton").addEventListener("click", () => { pushToGITA(document.getElementById("dataArea"), document.getElementById("areaInput").value, document.getElementById("dataArea").value) });
 
 // SUBMENUS
 
@@ -202,7 +228,7 @@ document.getElementById("settings").addEventListener("click", () => {
     } else {
         document.getElementById("footerLinkContainer").style.display = "block";
         document.getElementById("settings").innerHTML = "⨯";
-        document.getElementById("qrIcon").src = "./extensionWebsite/images/qrcode.svg";
+        document.getElementById("qrIcon").src = "./images/qrcode.svg";
         inSettings = true;
         inQrcode = false;
         document.getElementById("settingsSection").style.display = "block";
@@ -214,12 +240,12 @@ document.getElementById("settings").addEventListener("click", () => {
 let inQrcode = false;
 document.getElementById("qrGenButton").addEventListener("click", () => {
     if (inQrcode) {
-        document.getElementById("qrIcon").src = "./extensionWebsite/images/qrcode.svg";
+        document.getElementById("qrIcon").src = "./images/qrcode.svg";
         inQrcode = false;
         home();
     } else {
         document.getElementById("settings").innerHTML = "⚙";
-        document.getElementById("qrIcon").src = "./extensionWebsite/images/cross.svg";
+        document.getElementById("qrIcon").src = "./images/cross.svg";
         inQrcode = true;
         inSettings = false;
         document.getElementById("settingsSection").style.display = "none";
@@ -267,7 +293,7 @@ dataArea.addEventListener("keydown", function (e) {
 
     if (e.key === "Enter") {
         if (ctrlPressed)
-            document.getElementById("cButton").click();
+            document.getElementById("sButton").click();
     } else if (e.key === "Control") {
         ctrlPressed = true;
     }
@@ -283,21 +309,21 @@ dataArea.addEventListener("keyup", function (e) {
     }
 });
 
-codeInput.addEventListener("keydown", function (e) {
-    // console.log(e.code);
+// codeInput.addEventListener("keydown", function (e) {
+//     // console.log(e.code);
 
-    if (e.key === "Enter") {
-        if (ctrlPressed)
-            document.getElementById("pButton").click();
-    } else if (e.key === "Control") {
-        ctrlPressed = true;
-    }
-});
-codeInput.addEventListener("keyup", function (e) {
-    if (e.key === "Control") {
-        ctrlPressed = false;
-    }
-});
+//     if (e.key === "Enter") {
+//         if (ctrlPressed)
+//             document.getElementById("pButton").click();
+//     } else if (e.key === "Control") {
+//         ctrlPressed = true;
+//     }
+// });
+// codeInput.addEventListener("keyup", function (e) {
+//     if (e.key === "Control") {
+//         ctrlPressed = false;
+//     }
+// });
 
 // POST ping
 
