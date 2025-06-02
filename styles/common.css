@@ -181,10 +181,6 @@ section {
     height: 80vh;
 }
 
-#advancedSection {
-    height: auto;
-}
-
 #footerLinkContainer {
     width: 75%;
 
@@ -287,8 +283,8 @@ section {
     overflow-y: auto;
     background-color: var(--bgv);
     color: var(--fg);
-    border: solid 1px var(--b);
-    box-shadow: 0px 0px 5px inset var(--b), 0px 0px 20px var(--b);
+    border: solid 1px var(--m);
+    box-shadow: 0px 0px 5px inset var(--m), 0px 0px 20px var(--m);
     transition: all 0.2s;
     border-radius: 10px;
     padding: 10px;

@@ -345,35 +345,20 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
         <main>
             <br>
             <div class="margintop"></div>
-            <section id="easySection">
-                <textarea id="autoInput" class="blue portal"></textarea>
-                <p id="autoInputInfo" class="errorInfo"></p>
+            <section id="areaSection">
+                <input type="text" id="areaInput" class="areaInput" placeholder="Enter an area code here">
+                <p id="areaInputInfo" class="errorInfo"></p>
 
-                <div class="btnCentering"><button tabindex="-1" class="ebtn" id="aButton">Copy/Paste ↓</button></div>
+                <div class="btnCentering"><button tabindex="-1" class="ebtn" id="openAButton">Open area</button></div>
 
-                <textarea id="autoOutput" class="orange portal"></textarea>
-            </section>
-            <section id="classicSection">
-                <textarea id="dataInput" class="blue portal"></textarea>
-                <p id="dataInputInfo" class="errorInfo"></p>
+                <div class="btnCentering createMarginTop"><button tabindex="-1" class="ebtn" id="createAButton">Create area</button></div>
 
                 <div class="btnCenteringForce">
-                    <button tabindex="-1" class="tbtn cbtn" id="cButton">Copy ↓</button>
-                    <button tabindex="-1" class="tbtn pbtn" id="pButton">Paste ↑</button>
+                    <button tabindex="-1" class="tbtn cbtn" id="lButton">Load ↓</button>
+                    <button tabindex="-1" class="tbtn pbtn" id="sButton">Store ↑</button>
                 </div>
 
-                <textarea id="codeInput" class="orange portal"></textarea>
-                <p id="codeInputInfo" class="errorInfo"></p>
-
-                <section id="advancedSection">
-                    <br>
-                    <div class="settingsDiv">
-                        <h4>Advanced settings</h4>
-                        <span class="settingButton spanButton" id="settingPost">POST</span>
-                        <span class="settingButton spanButton" id="settingConst">Uneditable</span>
-                        <span class="settingButton spanButton" id="settingReset">Reset</span>
-                    </div>
-                </section>
+                <textarea id="dataArea" class="pink portal"></textarea>
             </section>
             <section id="qrCodeSection">
                 <div class="btnCenteringForce">
@@ -388,11 +373,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                     <span class="settingButton spanButton" id="settingTheme">Dark</span>
                 </div>
                 <div class="settingsDiv">
-                    <h6>Mode</h6>
-                    <span class="settingButton spanButton" id="settingMode">Simplified</span>
-                </div>
-                <div class="settingsDiv">
-                    <h6 id="deleteTitle">Delete after</h6>
+                    <h6 id="deleteTitle">Delete after<br><span class='verysmall'>(inactivity)</span></h6>
                     <span class="settingButton spanButton" id="settingTimeDelete">30min</span>
                 </div>
                 <div class="settingsDiv">
