@@ -1,5 +1,4 @@
-const DEFAULT_MAX_LENGTH = 1700;
-const AGGREGATE_MAX_LENGTH = 60000;
+const MAX_LENGTH = 60000;
 
 function home() {
     document.getElementById("settings").style.display = "block"
@@ -56,6 +55,8 @@ function showPrivacy(back = () => {home();}) {
 
 function updtTheme() {
     if (localSettings.theme == "dark") {
+        document.documentElement.style.setProperty('--m', '#fe20fd');
+        document.documentElement.style.setProperty('--mv', '#ff69fe');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');
@@ -84,6 +85,8 @@ function updtTheme() {
         document.documentElement.style.setProperty('--svgn', 'brightness(0.8)');
         document.documentElement.style.setProperty('--svgh', 'brightness(1)');
     } else {
+        document.documentElement.style.setProperty('--m', '#fe20fd');
+        document.documentElement.style.setProperty('--mv', '#ff69fe');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');
@@ -123,29 +126,18 @@ function updtLang() {
     document.getElementById("bottomTerms").innerHTML = localSettings.lang == "fr" ? "Conditions Générales d'Utilisation" : "Terms Of Use";
     document.getElementById("bottomPrivacy").innerHTML = localSettings.lang == "fr" ? "Politique de confidentialité" : "Privacy Policy";
 
-    // advanced
-    document.getElementById("settingPost").innerHTML = localSettings.lang == "fr" ? (localSettings.post ? "méthode POST" : "méthode GET") : (localSettings.post ? "POST method" : "GET method");
-    document.getElementById("settingConst").innerHTML = localSettings.lang == "fr" ? (localSettings.const ? "Inéditable" : "Agrégeable") : (localSettings.const ? "Uneditable" : "Aggregable");
-
     // settings
     document.getElementById("settingsH4").innerHTML = localSettings.lang == "fr" ? "Paramètres" : "Settings";
     document.getElementById("themeTitle").innerHTML = localSettings.lang == "fr" ? "Thème" : "Theme";
-    document.getElementById("deleteTitle").innerHTML = localSettings.lang == "fr" ? "Supprimer après" : "Delete after";
+    document.getElementById("deleteTitle").innerHTML = localSettings.lang == "fr" ? "Supprimer après<br><span class='verysmall'>(inactivité)</span>" : "Delete after<br><span class='verysmall'>(inactivity)</span>";
     document.getElementById("settingTheme").innerHTML = localSettings.lang == "fr" ? (localSettings.theme == "dark" ? "Sombre" : "Clair") : (localSettings.theme == "dark" ? "Dark" : "Light");
     document.getElementById("displayTerms").innerHTML = localSettings.lang == "fr" ? "Conditions Générales d'Utilisation" : "Terms Of Use";
 
-    // mode
-    if (localSettings.mode == "classic")
-        document.getElementById("settingMode").innerHTML = localSettings.lang == "fr" ? "Classique" : "Classic";
-    else if (localSettings.mode == "advanced")
-        document.getElementById("settingMode").innerHTML = localSettings.lang == "fr" ? "Avancé" : "Advanced";
-    else
-        document.getElementById("settingMode").innerHTML = localSettings.lang == "fr" ? "Simplifié" : "Simplified";
-
     // type
-    if (localSettings.type == "u")
-        document.getElementById("settingTimeDelete").innerHTML = (localSettings.lang == "fr" ? "Collage" : "Pasting") + "<br><span class='verysmall'>(30min max)</span>";
-    else if (localSettings.type == "s")
+    // if (localSettings.type == "u")
+    //     document.getElementById("settingTimeDelete").innerHTML = (localSettings.lang == "fr" ? "Collage" : "Pasting") + "<br><span class='verysmall'>(30min max)</span>";
+    // else 
+    if (localSettings.type == "s")
         document.getElementById("settingTimeDelete").innerHTML = "5min";
     else if (localSettings.type == "l")
         document.getElementById("settingTimeDelete").innerHTML = "12h";
@@ -185,9 +177,6 @@ function updtLang() {
         document.getElementById("frPrivacy").style.display = "none";
     }
     document.getElementById("backFromPolicy").innerHTML = localSettings.lang == "fr" ? "Retour" : "Back";
-
-    // get the extensions
-    document.getElementById("getBExt").innerHTML = localSettings.lang == "fr" ? "Installez l'extension !" : "Get the browser extension!";
 }
 
 document.getElementById("lang").addEventListener("click", switchLanguage)
@@ -206,27 +195,10 @@ function switchTheme() {
     getAll(updateAll);
 }
 
-document.getElementById("settingMode").addEventListener("click", switchMode)
-function switchMode() {
-    let kv = {};
-    if (localSettings.mode == "easy") {
-        kv["mode"] = "classic";
-    } else if (localSettings.mode == "classic") {
-        kv["mode"] = "advanced";
-    } else {
-        kv["mode"] = "easy";
-    }
-
-    set(kv)
-    getAll(updateAll);
-}
-
 document.getElementById("settingTimeDelete").addEventListener("click", switchTimeDelete)
 function switchTimeDelete() {
     let kv = {};
     if (localSettings.type == "n") {
-        kv["type"] = "u";
-    } else if (localSettings.type == "u") {
         kv["type"] = "s";
     } else if (localSettings.type == "s") {
         kv["type"] = "l";
@@ -234,22 +206,6 @@ function switchTimeDelete() {
         kv["type"] = "n";
     }
 
-    set(kv)
-    getAll(updateAll);
-}
-
-document.getElementById("settingConst").addEventListener("click", switchConst)
-function switchConst() {
-    let kv = {};
-    kv["const"] = localSettings.const ? false : true;
-    set(kv)
-    getAll(updateAll);
-}
-
-document.getElementById("settingPost").addEventListener("click", switchPost)
-function switchPost() {
-    let kv = {};
-    kv["post"] = localSettings.post ? false : true;
     set(kv)
     getAll(updateAll);
 }
@@ -321,7 +277,6 @@ function updateAll() {
     // console.log(localSettings);
     updtLang();
     updtTheme();
-    INPUT_MAX_LENGTH = localSettings.post ? AGGREGATE_MAX_LENGTH : (localSettings.const ? DEFAULT_MAX_LENGTH : AGGREGATE_MAX_LENGTH);
 }
 
 function initUpdateAll() {

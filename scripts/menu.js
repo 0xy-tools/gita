@@ -1,6 +1,6 @@
 function urlEncode(input) {
     // let input = encodeHTMLEntities(rawInput);
-    if (localSettings.post == false)
+    if (false)
         return input.split('').map(c => {
             if (/[a-zA-Z0-9\-_.~?]/.test(c)) {
                 return c;
@@ -28,7 +28,7 @@ function encodeHTMLEntities(text) {
 const regex = /^[a-z]{1,6}\-[a-z]{1,6}\-[a-z]{1,6}$/;
 let lastStringRequest = "";
 let lastCode = "";
-let INPUT_MAX_LENGTH = localSettings.post ? AGGREGATE_MAX_LENGTH : (localSettings.const ? DEFAULT_MAX_LENGTH : AGGREGATE_MAX_LENGTH);;
+const INPUT_MAX_LENGTH = MAX_LENGTH;
 
 function setError(idObj, message) {
     document.getElementById(idObj).innerHTML = message;
@@ -82,142 +82,71 @@ function updateAndClipboardCopy(obj, rawValue, isCode = false) {
     if (isCode) {
         document.getElementById("qrcode").innerHTML = "";
         document.getElementById("qrGenButton").style.transform = "scale(1)";
-        new QRCode(document.getElementById("qrcode"), `${localSettings.instance}?qr=1&p=${urlEncode(value)}`);
-        document.getElementById("qrValue").innerHTML = `${localSettings.instance}?qr=1&p=${urlEncode(value)}`;
+        new QRCode(document.getElementById("qrcode"), `https://c.0xy.fr?qr=1&p=${urlEncode(value)}`);
+        document.getElementById("qrValue").innerHTML = `https://c.0xy.fr?qr=1&p=${urlEncode(value)}`;
     }
 }
 
-function recursiveSend(ret, contents, code = "") {
-    // console.log(contents);
-    // for (const c of contents) {
-    //     console.log(c.length, c);
-    // }
-    if (contents.length > 0) {
-        let req = "";
-        if (code == "")
-            req = `${localSettings.instance}?l=${lang}&t=${localSettings.type}&c=${contents.shift()}`;
-        else
-            req = `${localSettings.instance}?a=${code}:${contents.shift()}`;
-
-        setTempPopUp(true, localSettings.lang == "fr" ? "Envoi en cours..." : "Sending...", localSettings.lang == "fr" ? `${contents.length} fragments restants` : `${contents.length} fragments left`)
-        fetch(req)
-            .then(response => response.text())
-            .then(text => {
-                if (code == "") code = text.startsWith("\n") ? text.slice(1) : text
-                setTimeout(() => {
-                    recursiveSend(ret, contents, code);
-                }, 200);
-            });
-    }
-    else {
-        updateAndClipboardCopy(ret, code, true);
-        setTempPopUp(false);
-        if (localSettings.mode == "easy") document.getElementById("autoOutput").style.transform = "scale(1)";
-    }
-}
-
-function getCodeFromCPOI(ret, mode, content, lang = 'en') {
+function getCodeFromGITA(ret, mode, content, lang = 'en') {
     if (content == lastStringRequest) ret.value = lastCode;
     if (mode == '') setError("dataInput", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
     if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("dataInput", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
     lastStringRequest = content;
 
-    if (localSettings.post == false) {
-        if (content.includes("%3Cscript")) {
-            if (INPUT_MAX_LENGTH == DEFAULT_MAX_LENGTH)
-                return setError("dataInputInfo", `${localSettings.lang == "fr" ? "Ne peut pas contenir &lt;script&gt;. Utilisez POST ou Agrégeable." : "Can't contain &lt;script&gt;. Use POST or Aggregable."}`);
-            else return recursiveSend(ret, chunkString(content, DEFAULT_MAX_LENGTH));
-        }
-
-        if (content.length <= DEFAULT_MAX_LENGTH)
-            fetch(`${localSettings.instance}?l=${lang}&t=${localSettings.type}${localSettings.const ? "&m=const" : ""}&${mode}=${content}`)
-                .then(response => response.text())
-                .then(text => {
-                    updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text, true);
-                });
-        else recursiveSend(ret, chunkString(content, DEFAULT_MAX_LENGTH));
-    }
-    else {
-        fetch(`${localSettings.instance}/index.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'l': lang,
-                't': localSettings.type,
-                'c': content,
-                'm': `post;${localSettings.const ? "const" : ""}`
-            })
+    fetch(`./index.php`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'l': lang,
+            't': localSettings.type,
+            'c': content
+            // ,
+            // 'm': `post;${localSettings.const ? "const" : ""}`
         })
-            .then(response => response.text())
-            .then(text => {
-                // console.log(text);
-                if (regex.test(text.startsWith("\n") ? text.slice(1) : text))
-                    updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text, true);
-                else
-                    updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-                document.getElementById("autoOutput").style.transform = "scale(1)";
-            })
-            .catch(error => console.error('Error:', error));
-    }
+    })
+        .then(response => response.text())
+        .then(text => {
+            // console.log(text);
+            if (regex.test(text.startsWith("\n") ? text.slice(1) : text))
+                updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text, true);
+            else
+                updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
+            document.getElementById("autoOutput").style.transform = "scale(1)";
+        })
+        .catch(error => console.error('Error:', error));
+
 }
 
-function getClipboardFromCPOI(ret, code) {
+function getClipboardFromGITA(ret, code) {
     if (code == '' || regex.test(code) == false) return setError("codeInputInfo", `"${code}" ${localSettings.lang == "fr" ? "ne ressemble pas à un code valide" : "doesn't look like a valid code"}`);
-    if (localSettings.post == false) {
-        fetch(`${localSettings.instance}?p=${code}`)
-            .then(response => response.text())
-            .then(text => {
-                updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-            });
-    } else {
-        fetch(`${localSettings.instance}/index.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'p': code
-            })
+
+    fetch(`./index.php`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'p': code
         })
-            .then(response => response.text())
-            .then(text => {
-                // console.log(response);
-                updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-            })
-            .catch(error => console.error('Error:', error));
-    }
+    })
+        .then(response => response.text())
+        .then(text => {
+            // console.log(response);
+            updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
+        })
+        .catch(error => console.error('Error:', error));
+
 }
 
 
-function getEasyFromCPOI(ret, content, lang = 'en') {
+function getEasyFromGITA(ret, content, lang = 'en') {
     if (content == lastStringRequest) return ret.value = lastCode;
     if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("autoInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
     lastStringRequest = content;
 
-    if (localSettings.post == false) {
-        if (content.includes("%3Cscript")) {
-            if (INPUT_MAX_LENGTH == DEFAULT_MAX_LENGTH)
-                return setError("autoInputInfo", `${localSettings.lang == "fr" ? "Ne peut pas contenir &lt;script&gt;. Utilisez POST ou Agrégeable." : "Can't contain &lt;script&gt;. Use POST or Aggregable."}`);
-            else return recursiveSend(ret, chunkString(content, DEFAULT_MAX_LENGTH));
-        }
-
-        // console.log(`${localSettings.instance}?l=${lang}&t=${localSettings.type}${localSettings.const ? "&m=const" : ""}&e=${content}`);
-        // console.log(`${localSettings.instance}?${lang}&e=${urlEncode(content)}`);
-        if (content.length <= DEFAULT_MAX_LENGTH)
-            fetch(`${localSettings.instance}?l=${lang}&t=${localSettings.type}&e=${content}`)
-                .then(response => response.text())
-                .then(text => {
-                    if (regex.test(text.startsWith("\n") ? text.slice(1) : text))
-                        updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text, true);
-                    else
-                        updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-                    document.getElementById("autoOutput").style.transform = "scale(1)";
-                });
-        else recursiveSend(ret, chunkString(content, DEFAULT_MAX_LENGTH));
-    } else {
-        fetch(`${localSettings.instance}/index.php`, {
+        fetch(`./index.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -225,8 +154,9 @@ function getEasyFromCPOI(ret, content, lang = 'en') {
             body: new URLSearchParams({
                 'l': lang,
                 't': localSettings.type,
-                'e': content,
-                'm': `post;${localSettings.const ? "const" : ""}`
+                'e': content
+                // ,
+                // 'm': `post;${localSettings.const ? "const" : ""}`
             })
         })
             .then(response => response.text())
@@ -239,7 +169,6 @@ function getEasyFromCPOI(ret, content, lang = 'en') {
                 document.getElementById("autoOutput").style.transform = "scale(1)";
             })
             .catch(error => console.error('Error:', error));
-    }
 }
 
 document.getElementById("autoOutput").style.transform = "scale(0)";
@@ -247,9 +176,9 @@ document.getElementById("qrGenButton").style.transform = "scale(0)";
 
 // COPY PASTE BUTTONS
 
-document.getElementById("aButton").addEventListener("click", () => { getEasyFromCPOI(document.getElementById("autoOutput"), urlEncode(document.getElementById("autoInput").value), localSettings.lang); });
-document.getElementById("cButton").addEventListener("click", () => { getCodeFromCPOI(document.getElementById("codeInput"), 'c', urlEncode(document.getElementById("dataInput").value), localSettings.lang) });
-document.getElementById("pButton").addEventListener("click", () => { getClipboardFromCPOI(document.getElementById("dataInput"), document.getElementById("codeInput").value) });
+document.getElementById("aButton").addEventListener("click", () => { getEasyFromGITA(document.getElementById("autoOutput"), urlEncode(document.getElementById("autoInput").value), localSettings.lang); });
+document.getElementById("cButton").addEventListener("click", () => { getCodeFromGITA(document.getElementById("codeInput"), 'c', urlEncode(document.getElementById("dataInput").value), localSettings.lang) });
+document.getElementById("pButton").addEventListener("click", () => { getClipboardFromGITA(document.getElementById("dataInput"), document.getElementById("codeInput").value) });
 
 // SUBMENUS
 
@@ -275,7 +204,7 @@ document.getElementById("settings").addEventListener("click", () => {
     } else {
         document.getElementById("footerLinkContainer").style.display = "block";
         document.getElementById("settings").innerHTML = "⨯";
-        document.getElementById("qrIcon").src = "./images/qrcode.svg";
+        document.getElementById("qrIcon").src = "./extensionWebsite/images/qrcode.svg";
         inSettings = true;
         inQrcode = false;
         document.getElementById("settingsSection").style.display = "block";
@@ -288,12 +217,12 @@ document.getElementById("settings").addEventListener("click", () => {
 let inQrcode = false;
 document.getElementById("qrGenButton").addEventListener("click", () => {
     if (inQrcode) {
-        document.getElementById("qrIcon").src = "./images/qrcode.svg";
+        document.getElementById("qrIcon").src = "./extensionWebsite/images/qrcode.svg";
         inQrcode = false;
         home();
     } else {
         document.getElementById("settings").innerHTML = "⚙";
-        document.getElementById("qrIcon").src = "./images/cross.svg";
+        document.getElementById("qrIcon").src = "./extensionWebsite/images/cross.svg";
         inQrcode = true;
         inSettings = false;
         document.getElementById("settingsSection").style.display = "none";
@@ -329,8 +258,6 @@ autoInput.addEventListener("keydown", function (e) {
 
     if (urlEncode(autoInput.value).length > INPUT_MAX_LENGTH)
         setError("autoInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} (${INPUT_MAX_LENGTH - urlEncode(autoInput.value).length})`);
-    else if (urlEncode(autoInput.value).includes("%3Cscript") && INPUT_MAX_LENGTH == DEFAULT_MAX_LENGTH && localSettings.post == false)
-        setError("autoInputInfo", `${localSettings.lang == "fr" ? "Ne peut pas contenir &lt;script&gt;. Utilisez POST ou Agrégeable." : "Can't contain &lt;script&gt;. Use POST or Aggregable."}`);
     else
         setError("autoInputInfo", "");
 });
@@ -352,8 +279,6 @@ dataInput.addEventListener("keydown", function (e) {
 
     if (urlEncode(dataInput.value).length > INPUT_MAX_LENGTH)
         setError("dataInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} (${INPUT_MAX_LENGTH - urlEncode(dataInput.value).length})`);
-    else if (urlEncode(dataInput.value).includes("%3Cscript") && INPUT_MAX_LENGTH == DEFAULT_MAX_LENGTH && localSettings.post == false)
-        setError("dataInputInfo", `${localSettings.lang == "fr" ? "Ne peut pas contenir &lt;script&gt;. Utilisez POST ou Agrégeable." : "Can't contain &lt;script&gt;. Use POST or Aggregable."}`);
     else
         setError("dataInputInfo", "");
 });
@@ -385,7 +310,7 @@ function sendPing(json = false) {
     setTempPopUp(true, `Waiting...`, "");
     if (json)
         // json requests not supported by server yet
-        fetch(`${localSettings.instance}/index.php`, {
+        fetch(`./index.php`, {
             method: 'POST',
             body: JSON.stringify({ 'ping': 'yes' }),
             headers: {
@@ -400,7 +325,7 @@ function sendPing(json = false) {
             })
             .catch(error => console.error('Error:', error));
     else
-        fetch(`${localSettings.instance}/index.php`, {
+        fetch(`./index.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

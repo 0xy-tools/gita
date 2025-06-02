@@ -250,10 +250,10 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./extensionWebsite/styles/vars.css">
-        <link rel="stylesheet" href="./extensionWebsite/styles/common.css">
-        <link rel="stylesheet" href="./extensionWebsite/styles/menu.css">
-        <script src="./extensionWebsite/lib/qrcode.min.js"></script>
+        <link rel="stylesheet" href="./styles/vars.css">
+        <link rel="stylesheet" href="./styles/common.css">
+        <link rel="stylesheet" href="./styles/menu.css">
+        <script src="./lib/qrcode.min.js"></script>
 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="viewport"
@@ -263,13 +263,13 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
         <meta name="author" content="MagicTINTIN">
         <meta name="description" content="GITA is a service/browser extension that allows you to copy and paste text between your different devices.\nSimple and fast to use, no sign-up or account required.">
 
-        <link rel="icon" type="image/x-icon" href="extensionWebsite/images/favicon.png">
+        <link rel="icon" type="image/x-icon" href="images/favicon.png">
 
         <meta property="og:type" content="website" />
         <meta property="og:title" content="GITA">
         <meta property="og:description" content="GITA is a service/browser extension that allows you to copy and paste text between your different devices.\nSimple and fast to use, no sign-up or account required.">
 
-        <meta property="og:image" content="https://gita.0xy.fr/extensionWebsite/images/favicon.png">
+        <meta property="og:image" content="https://gita.0xy.fr/images/favicon.png">
         <meta property="og:image:type" content="image/png">
         <meta property="og:image:alt" content="Logo of GITA">
 
@@ -281,16 +281,15 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "name": "GITA",
-                "alternateName" : ["gita","global internet text area","g0xy"],
+                "alternateName" : ["gita","global internet text area","g0xy", "Global Internet Text Area"],
                 "url": "https://gita.0xy.fr/",
                 "inLanguage": "en",
                 "isAccessibleForFree": "true",
                 "isFamilyFriendly": "true",
                 "license": "https://raw.githubusercontent.com/0xy-tools/gita/refs/heads/main/LICENSE",
                 "isPartOf": "https://0xy.fr/",
-                "keywords": "copy, paste, shared, online, devices",
-                "description": "GITA is a web service that allows you to share text between your different devices.\nSimple and fast to use, no sign-up or account required.",
-                "alternateName": "Global Internet Text Area"
+                "keywords": "copy, paste, shared, online, devices, copy-paste",
+                "description": "GITA is a web service that allows you to share text between your different devices.\nSimple and fast to use, no sign-up or account required."
             }
         </script>
         <script type="application/ld+json">
@@ -298,16 +297,15 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "name": "GITA",
-                "alternateName" : ["gita","global internet text area","g0xy"],
+                "alternateName" : ["gita","global internet text area","g0xy", "Global Internet Text Area"],
                 "url": "https://gita.0xy.fr/",
                 "inLanguage": "fr",
                 "isAccessibleForFree": "true",
                 "isFamilyFriendly": "true",
                 "license": "https://raw.githubusercontent.com/0xy-tools/gita/refs/heads/main/LICENSE",
                 "isPartOf": "https://0xy.fr/",
-                "keywords": "copier, coller, en ligne, appareils",
-                "description": "GITA est un service web vous permettant de partager du texte entre vos différents appareils.\nSimple et rapide à utiliser, pas de compte ni d'enregistrement nécessaire.",
-                "alternateName": "Global Internet Text Area"
+                "keywords": "copier, coller, en ligne, appareils, copier-coller",
+                "description": "GITA est un service web vous permettant de partager du texte entre vos différents appareils.\nSimple et rapide à utiliser, pas de compte ni d'enregistrement nécessaire."
             }
         </script>
         <script type="application/ld+json">
@@ -332,7 +330,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
         <nav>
             <div class="valign"><span class="languageButton spanButton textButton" id="lang">EN</span></div>
             <div class="buttonGroup">
-                <span class="qrButton spanButton" id="qrGenButton"><img src="./extensionWebsite/images/qrcode.svg" alt="QRcode"
+                <span class="qrButton spanButton" id="qrGenButton"><img src="./images/qrcode.svg" alt="QRcode"
                         class="navSvgBtn" id="qrIcon"></span>
                 <div class="valign"><span class="settingsButton spanButton textButton" id="settings">⚙</span></div>
                 <div class="valign"><span class="settingsButton spanButton textButton" id="topBackPolicy">＜</span></div>
@@ -342,13 +340,6 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
         <div id="infoTempPopUp">
             <h2></h2>
             <p></p>
-        </div>
-        <div id="getTheExtension">
-            <span id="getBExt">Get the browser extension!</span>
-            <div id="availableOn">
-                <a href="https://addons.mozilla.org/en-US/firefox/addon/gita/" target="_blank"><img class="availFox" src="extensionWebsite/images/getFirefox.png"></a>
-                <a href="https://chromewebstore.google.com/detail/gita/kdlpjmhiomfnlkgbeghbeocfafggcdof" target="_blank"><img class="availChrome" src="extensionWebsite/images/getChrome.png"></a>
-            </div>
         </div>
         <h1>GITA</h1>
         <main>
@@ -681,9 +672,9 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
             </p>
         </main>
 
-        <script src="./extensionWebsite/scripts/memory.js"></script>
-        <script src="./extensionWebsite/scripts/settings.js"></script>
-        <script src="./extensionWebsite/scripts/srvmenu.js"></script>
+        <script src="./scripts/memory.js"></script>
+        <script src="./scripts/settings.js"></script>
+        <script src="./scripts/menu.js"></script>
     </body>
 
     </html>

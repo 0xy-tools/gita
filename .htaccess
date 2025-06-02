@@ -1,8 +1,8 @@
-<IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin https://cpoi.softplus.fr
-    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
-    Header set Access-Control-Allow-Headers "Content-Type"
-</IfModule>
+# <IfModule mod_headers.c>
+#     Header set Access-Control-Allow-Origin https://gita.softplus.fr
+#     Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+#     Header set Access-Control-Allow-Headers "Content-Type"
+# </IfModule>
 
 RewriteEngine On
 

@@ -2,11 +2,8 @@
  * tou : terms of use not accepted
  * theme : light|dark
  * lang : fr|en
- * mode : classic|easy|advanced
- * instance : https://cpoi.0xy.fr/
- * type : u|n|s|l
- * const : Uneditable mode
- * post : POST method (else GET)
+ * instance : https://gita.0xy.fr/
+ * type : n|s|l
  */
 let localSettings;
 
@@ -66,7 +63,7 @@ function removeAll(callback = () => { }) {
 }
 
 function getAll(callback = () => { }) {
-    get(["tou", "theme", "lang", "mode", "instance", "type", "const", "post"], (values) => {
+    get(["tou", "theme", "lang", "instance", "type"], (values) => {
         // console.log("before", values);
         if (values["tou"] === null)
             values.tou = false;
@@ -74,17 +71,8 @@ function getAll(callback = () => { }) {
             values.tou = values["tou"] == "true" ? true : false;
         if (!values["theme"]) values.theme = "dark";
         if (!values["lang"]) values.lang = "en";
-        if (!values["mode"]) values.mode = "easy";
         if (!values["type"]) values.type = "n";
-        if (values["const"] === null)
-            values.const = true;
-        else
-            values.const = values["const"] == "true" ? true : false;
-        if (values["post"] === null)
-            values.post = true;
-        else
-            values.post = values["post"] == "true" ? true : false;
-        if (!values["instance"]) values.instance = "https://cpoi.0xy.fr/";
+        if (!values["instance"]) values.instance = "https://gita.0xy.fr/";
         // console.log("after", values);
         localSettings = values;
         callback();

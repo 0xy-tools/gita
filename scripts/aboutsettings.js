@@ -1,5 +1,7 @@
 function updtTheme() {
     if (localSettings.theme == "dark") {
+        document.documentElement.style.setProperty('--m', '#fe20fd');
+        document.documentElement.style.setProperty('--mv', '#ff69fe');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');
@@ -28,6 +30,8 @@ function updtTheme() {
         document.documentElement.style.setProperty('--svgn', 'brightness(0.8)');
         document.documentElement.style.setProperty('--svgh', 'brightness(1)');
     } else {
+        document.documentElement.style.setProperty('--m', '#fe20fd');
+        document.documentElement.style.setProperty('--mv', '#ff69fe');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');
@@ -95,7 +99,6 @@ function updateAll() {
     // console.log(localSettings);
     updtLang();
     updtTheme();
-    INPUT_MAX_LENGTH = localSettings.post ? AGGREGATE_MAX_LENGTH : (localSettings.const ? DEFAULT_MAX_LENGTH : AGGREGATE_MAX_LENGTH);
 }
 
 function initUpdateAll() {
