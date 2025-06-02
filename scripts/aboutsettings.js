@@ -2,6 +2,7 @@ function updtTheme() {
     if (localSettings.theme == "dark") {
         document.documentElement.style.setProperty('--m', '#fe20fd');
         document.documentElement.style.setProperty('--mv', '#ff69fe');
+        document.documentElement.style.setProperty('--mt', '#151215');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');
@@ -32,6 +33,7 @@ function updtTheme() {
     } else {
         document.documentElement.style.setProperty('--m', '#fe20fd');
         document.documentElement.style.setProperty('--mv', '#ff69fe');
+        document.documentElement.style.setProperty('--mt', '#ffe1ff');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');

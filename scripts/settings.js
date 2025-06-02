@@ -1,25 +1,21 @@
 const MAX_LENGTH = 60000;
+const MAX_CODE_LENGTH = 20;
 
 function home() {
     document.getElementById("settings").style.display = "block"
     document.getElementById("settings").innerHTML = "⚙";
-    
+
     document.getElementById("footerLinkContainer").style.display = "block";
-    document.getElementById("easySection").style.display = localSettings.mode == "easy" ? "block" : "none";
+    document.getElementById("areaSection").style.display = "block";
     document.getElementById("settingsSection").style.display = "none";
-    document.getElementById("classicSection").style.display = localSettings.mode == "easy" ? "none" : "block";
     document.getElementById("qrCodeSection").style.display = "none";
     document.getElementById("termsSection").style.display = "none";
     document.getElementById("topBackPolicy").style.display = "none";
     document.getElementById("policySection").style.display = "none";
-    document.getElementById("advancedSection").style.display = localSettings.mode == "advanced" ? "block" : "none";
 }
 
 function autoFocus() {
-    if (localSettings.mode == "easy")
-        document.getElementById("autoInput").focus();
-    else
-        document.getElementById("dataInput").focus();
+    document.getElementById("areaInput").focus();
 }
 
 function showTerms() {
@@ -27,24 +23,20 @@ function showTerms() {
     document.getElementById("policySection").style.display = "none";
     document.getElementById("settings").style.display = "none";
     document.getElementById("qrGenButton").style.transform = "scale(0)";
-    document.getElementById("easySection").style.display = "none";
+    document.getElementById("areaSection").style.display = "none";
     document.getElementById("settingsSection").style.display = "none";
-    document.getElementById("classicSection").style.display = "none";
     document.getElementById("qrCodeSection").style.display = "none";
     document.getElementById("termsSection").style.display = "block";
-    document.getElementById("advancedSection").style.display = "none"
     document.getElementById("footerLinkContainer").style.display = "none";
 }
 
-function showPrivacy(back = () => {home();}) {
+function showPrivacy(back = () => { home(); }) {
     document.getElementById("settings").style.display = "none";
     document.getElementById("qrGenButton").style.transform = "scale(0)";
-    document.getElementById("easySection").style.display = "none";
+    document.getElementById("areaSection").style.display = "none";
     document.getElementById("settingsSection").style.display = "none";
-    document.getElementById("classicSection").style.display = "none";
     document.getElementById("qrCodeSection").style.display = "none";
     document.getElementById("termsSection").style.display = "none";
-    document.getElementById("advancedSection").style.display = "none"
     document.getElementById("topBackPolicy").style.display = "block";
     document.getElementById("policySection").style.display = "block";
     document.getElementById("footerLinkContainer").style.display = "none";
@@ -57,6 +49,7 @@ function updtTheme() {
     if (localSettings.theme == "dark") {
         document.documentElement.style.setProperty('--m', '#fe20fd');
         document.documentElement.style.setProperty('--mv', '#ff69fe');
+        document.documentElement.style.setProperty('--mt', '#151215');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');
@@ -87,6 +80,7 @@ function updtTheme() {
     } else {
         document.documentElement.style.setProperty('--m', '#fe20fd');
         document.documentElement.style.setProperty('--mv', '#ff69fe');
+        document.documentElement.style.setProperty('--mt', '#ffe1ff');
         document.documentElement.style.setProperty('--r', '#FE3420');
         document.documentElement.style.setProperty('--rv', '#FF7769');
         document.documentElement.style.setProperty('--re', '#FE3420');
@@ -120,9 +114,10 @@ function updtTheme() {
 function updtLang() {
     // general interface
     document.getElementById("lang").innerHTML = localSettings.lang == "fr" ? "FR" : "EN";
-    document.getElementById("cButton").innerHTML = localSettings.lang == "fr" ? "Copier" : "Copy";
-    document.getElementById("pButton").innerHTML = localSettings.lang == "fr" ? "Coller" : "Paste";
-    document.getElementById("aButton").innerHTML = localSettings.lang == "fr" ? "Copier/Coller" : "Copy/Paste";
+    document.getElementById("lButton").innerHTML = localSettings.lang == "fr" ? "Recevoir" : "Load";
+    document.getElementById("sButton").innerHTML = localSettings.lang == "fr" ? "Envoyer" : "Store";
+    document.getElementById("openAButton").innerHTML = localSettings.lang == "fr" ? "Ouvrir une zone" : "Open area";
+    document.getElementById("createAButton").innerHTML = localSettings.lang == "fr" ? "Créer une zone" : "Open area";
     document.getElementById("bottomTerms").innerHTML = localSettings.lang == "fr" ? "Conditions Générales d'Utilisation" : "Terms Of Use";
     document.getElementById("bottomPrivacy").innerHTML = localSettings.lang == "fr" ? "Politique de confidentialité" : "Privacy Policy";
 
@@ -147,9 +142,8 @@ function updtLang() {
     document.getElementById("saveSettings").innerHTML = localSettings.lang == "fr" ? "Enregistrer" : "Save";
 
     // inputs/outputs
-    document.getElementById("autoInput").placeholder = localSettings.lang == "fr" ? "Entrez votre texte à copier ou votre code ici" : "Enter your text to copy or your code here";
-    document.getElementById("dataInput").placeholder = localSettings.lang == "fr" ? "Entrez votre texte à copier ici" : "Enter your text to copy here";
-    document.getElementById("codeInput").placeholder = localSettings.lang == "fr" ? "Entrez votre code de presse papier ici" : "Enter your clipboard code here";
+    document.getElementById("areaInput").placeholder = localSettings.lang == "fr" ? "Entrez un code de zone ici" : "Enter an area code here";
+    document.getElementById("dataArea").placeholder = localSettings.lang == "fr" ? "Entrez votre texte à copier ici" : "Enter your text to copy here";
 
     // settings instance value (not really language dependant)
     document.getElementById("settingInstance").value = localSettings.instance;
@@ -255,18 +249,11 @@ function getQRCode() {
     // set({tou:true}, updateAll());
     // temporary set TOU to make it easier when copying
     localSettings.tou = true;
-    if (addressArgs["p"]) {
-        if (localSettings.mode == "easy") {
-            document.getElementById("autoInput").value = addressArgs["p"];
-            setTimeout(() => {
-                document.getElementById("aButton").click();
-            }, 200);
-        } else {
-            document.getElementById("codeInput").value = addressArgs["p"];
-            setTimeout(() => {
-                document.getElementById("pButton").click();
-            }, 200);
-        }
+    if (addressArgs["a"]) {
+        document.getElementById("areaInput").value = addressArgs["a"];
+        setTimeout(() => {
+            document.getElementById("openAButton").click();
+        }, 200);
     }
 
 }
@@ -291,8 +278,8 @@ function initUpdateAll() {
 
 getAll(initUpdateAll);
 
-document.getElementById("settingReset").addEventListener("click", () => {
-    removeAll(() => {
-        getAll(initUpdateAll);
-    })
-})
+// document.getElementById("settingReset").addEventListener("click", () => {
+//     removeAll(() => {
+//         getAll(initUpdateAll);
+//     })
+// })

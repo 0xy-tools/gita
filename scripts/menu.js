@@ -26,7 +26,8 @@ function encodeHTMLEntities(text) {
 // COMMINUCATION FUNCTIONS
 
 const regex = /^[a-z]{1,6}\-[a-z]{1,6}\-[a-z]{1,6}$/;
-let lastStringRequest = "";
+let lastDataStringRequest = "";
+let lastAreaRequest = "";
 let lastCode = "";
 const INPUT_MAX_LENGTH = MAX_LENGTH;
 
@@ -73,24 +74,24 @@ function chunkString(inputString, maxLength) {
     return chunks;
 }
 
-function updateAndClipboardCopy(obj, rawValue, isCode = false) {
+function showQRcode(obj, rawValue, isCode = false) {
     let value = decodeHTMLEntities(rawValue);
     // console.log(value);
     obj.value = value;
     lastCode = value;
-    navigator.clipboard.writeText(value);
+    // navigator.clipboard.writeText(value);
     if (isCode) {
         document.getElementById("qrcode").innerHTML = "";
         document.getElementById("qrGenButton").style.transform = "scale(1)";
-        new QRCode(document.getElementById("qrcode"), `https://c.0xy.fr?qr=1&p=${urlEncode(value)}`);
-        document.getElementById("qrValue").innerHTML = `https://c.0xy.fr?qr=1&p=${urlEncode(value)}`;
+        new QRCode(document.getElementById("qrcode"), `https://g.0xy.fr?qr=1&a=${urlEncode(value)}`);
+        document.getElementById("qrValue").innerHTML = `https://g.0xy.fr?qr=1&a=${urlEncode(value)}`;
     }
 }
 
-function getCodeFromGITA(ret, mode, content, lang = 'en') {
-    if (content == lastStringRequest) ret.value = lastCode;
-    if (mode == '') setError("dataInput", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
-    if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("dataInput", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
+function getCodeFromGITA(ret, mode, lang = 'en') {
+    // if (content == lastStringRequest) ret.value = lastCode;
+    if (mode == '') setError("dataArea", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
+    if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("dataArea", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
     lastStringRequest = content;
 
     fetch(`./index.php`, {
@@ -100,8 +101,8 @@ function getCodeFromGITA(ret, mode, content, lang = 'en') {
         },
         body: new URLSearchParams({
             'l': lang,
-            't': localSettings.type,
-            'c': content
+            'duration': localSettings.type,
+            'create': ''
             // ,
             // 'm': `post;${localSettings.const ? "const" : ""}`
         })
@@ -110,10 +111,8 @@ function getCodeFromGITA(ret, mode, content, lang = 'en') {
         .then(text => {
             // console.log(text);
             if (regex.test(text.startsWith("\n") ? text.slice(1) : text))
-                updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text, true);
-            else
-                updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-            document.getElementById("autoOutput").style.transform = "scale(1)";
+                showQRcode(ret, text.startsWith("\n") ? text.slice(1) : text, true);
+            document.getElementById("dataArea").style.transform = "scale(1)";
         })
         .catch(error => console.error('Error:', error));
 
@@ -134,51 +133,50 @@ function getClipboardFromGITA(ret, code) {
         .then(response => response.text())
         .then(text => {
             // console.log(response);
-            updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
+            // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
+            //TODO: SOMETHING
         })
         .catch(error => console.error('Error:', error));
 
 }
 
 
-function getEasyFromGITA(ret, content, lang = 'en') {
-    if (content == lastStringRequest) return ret.value = lastCode;
-    if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("autoInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
-    lastStringRequest = content;
+function openFromGITA(ret, areaCode, lang = 'en') {
+    if (areaCode == lastAreaRequest) return ret.value = lastCode;
+    if (areaCode == '' || areaCode.length > MAX_CODE_LENGTH) return setError("areaInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
+    lastAreaRequest = areaCode;
 
-        fetch(`./index.php`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                'l': lang,
-                't': localSettings.type,
-                'e': content
-                // ,
-                // 'm': `post;${localSettings.const ? "const" : ""}`
-            })
+    fetch(`./index.php`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'l': lang,
+            'pull': areaCode
+            // ,
+            // 'm': `post;${localSettings.const ? "const" : ""}`
         })
-            .then(response => response.text())
-            .then(text => {
-                // console.log(text);
-                if (regex.test(text.startsWith("\n") ? text.slice(1) : text))
-                    updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text, true);
-                else
-                    updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-                document.getElementById("autoOutput").style.transform = "scale(1)";
-            })
-            .catch(error => console.error('Error:', error));
+    })
+        .then(response => response.text())
+        .then(text => {
+            // console.log(text);
+            // FIXME: true error and no qrcode when wrong area //text.startsWith("\n") ? text.slice(1) : text
+            showQRcode(ret, areaCode, true);
+            document.getElementById("dataArea").style.transform = "scale(1)";
+        })
+        .catch(error => console.error('Error:', error));
 }
 
-document.getElementById("autoOutput").style.transform = "scale(0)";
+document.getElementById("dataArea").style.transform = "scale(0)";
 document.getElementById("qrGenButton").style.transform = "scale(0)";
 
 // COPY PASTE BUTTONS
 
-document.getElementById("aButton").addEventListener("click", () => { getEasyFromGITA(document.getElementById("autoOutput"), urlEncode(document.getElementById("autoInput").value), localSettings.lang); });
-document.getElementById("cButton").addEventListener("click", () => { getCodeFromGITA(document.getElementById("codeInput"), 'c', urlEncode(document.getElementById("dataInput").value), localSettings.lang) });
-document.getElementById("pButton").addEventListener("click", () => { getClipboardFromGITA(document.getElementById("dataInput"), document.getElementById("codeInput").value) });
+document.getElementById("openAButton").addEventListener("click", () => { getEasyFromGITA(document.getElementById("dataArea"), urlEncode(document.getElementById("areaInput").value), localSettings.lang); });
+document.getElementById("cButton").addEventListener("click", () => { getCodeFromGITA(document.getElementById("codeInput"), localSettings.lang) });
+document.getElementById("lButton").addEventListener("click", () => { getClipboardFromGITA(document.getElementById("dataInput"), document.getElementById("codeInput").value) });
+document.getElementById("sButton").addEventListener("click", () => { getClipboardFromGITA(document.getElementById("dataInput"), document.getElementById("codeInput").value) });
 
 // SUBMENUS
 
@@ -208,8 +206,7 @@ document.getElementById("settings").addEventListener("click", () => {
         inSettings = true;
         inQrcode = false;
         document.getElementById("settingsSection").style.display = "block";
-        document.getElementById("easySection").style.display = "none";
-        document.getElementById("classicSection").style.display = "none";
+        document.getElementById("areaSection").style.display = "none";
         document.getElementById("qrCodeSection").style.display = "none";
     }
 });
@@ -226,8 +223,7 @@ document.getElementById("qrGenButton").addEventListener("click", () => {
         inQrcode = true;
         inSettings = false;
         document.getElementById("settingsSection").style.display = "none";
-        document.getElementById("easySection").style.display = "none";
-        document.getElementById("classicSection").style.display = "none";
+        document.getElementById("areaSection").style.display = "none";
         document.getElementById("qrCodeSection").style.display = "block";
     }
 });
@@ -242,11 +238,10 @@ document.getElementById("saveSettings").addEventListener("click", () => {
 
 // KEYBOARD SHORTCUTS
 
-var autoInput = document.getElementById("autoInput");
-var dataInput = document.getElementById("dataInput");
-var codeInput = document.getElementById("codeInput");
+var areaInput = document.getElementById("areaInput");
+var dataArea = document.getElementById("dataArea");
 var ctrlPressed = false;
-autoInput.addEventListener("keydown", function (e) {
+areaInput.addEventListener("keydown", function (e) {
     // console.log(e.code);
 
     if (e.key === "Enter") {
@@ -256,18 +251,18 @@ autoInput.addEventListener("keydown", function (e) {
         ctrlPressed = true;
     }
 
-    if (urlEncode(autoInput.value).length > INPUT_MAX_LENGTH)
-        setError("autoInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} (${INPUT_MAX_LENGTH - urlEncode(autoInput.value).length})`);
+    if (urlEncode(areaInput.value).length > INPUT_MAX_LENGTH)
+        setError("areaInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} (${INPUT_MAX_LENGTH - urlEncode(areaInput.value).length})`);
     else
-        setError("autoInputInfo", "");
+        setError("areaInputInfo", "");
 });
-autoInput.addEventListener("keyup", function (e) {
+areaInput.addEventListener("keyup", function (e) {
     if (e.key === "Control") {
         ctrlPressed = false;
     }
 });
 
-dataInput.addEventListener("keydown", function (e) {
+dataArea.addEventListener("keydown", function (e) {
     // console.log(e.code);
 
     if (e.key === "Enter") {
@@ -277,12 +272,12 @@ dataInput.addEventListener("keydown", function (e) {
         ctrlPressed = true;
     }
 
-    if (urlEncode(dataInput.value).length > INPUT_MAX_LENGTH)
-        setError("dataInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} (${INPUT_MAX_LENGTH - urlEncode(dataInput.value).length})`);
+    if (urlEncode(dataArea.value).length > INPUT_MAX_LENGTH)
+        setError("dataAreaInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} (${INPUT_MAX_LENGTH - urlEncode(dataArea.value).length})`);
     else
-        setError("dataInputInfo", "");
+        setError("dataAreaInfo", "");
 });
-dataInput.addEventListener("keyup", function (e) {
+dataArea.addEventListener("keyup", function (e) {
     if (e.key === "Control") {
         ctrlPressed = false;
     }
