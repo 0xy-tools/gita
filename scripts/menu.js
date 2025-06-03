@@ -138,6 +138,16 @@ function createCodeFromGITA(ret, mode, lang = 'en') {
 
 }
 
+let animData;
+function clearAnimData() {
+    clearTimeout(animData);
+    var el = document.getElementById("dataArea");
+    el.classList.remove("rcvd");
+    el.classList.remove("sent");
+    el.style.animation = 'none';
+    el.offsetHeight; /* trigger reflow */
+    el.style.animation = null;
+}
 function pullFromGITA(ret, code) {
     if (code == '' || regex.test(code) == false) return setError("areaInputInfo", `"${code}" ${localSettings.lang == "fr" ? "ne ressemble pas à un code valide" : "doesn't look like a valid code"}`);
 
@@ -155,8 +165,15 @@ function pullFromGITA(ret, code) {
             // console.log(response);
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
             //: SOMETHING
+            clearAnimData();
+            document.getElementById("dataArea").classList.add("rcvd");
             let value = decodeHTMLEntities(text)
-            ret.value = value.startsWith("\n") ? value.slice(1) : value;
+            setTimeout(() => {
+                ret.value = value.startsWith("\n") ? value.slice(1) : value;
+            }, 100)
+            animData = setTimeout(() => {
+                document.getElementById("dataArea").classList.remove("rcvd");
+            }, 1000);
         })
         .catch(error => console.error('Error:', error));
 
@@ -180,6 +197,11 @@ function pushToGITA(ret, area, content) {
             // console.log(response);
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
             //TODO: SOMETHING like an animation to tell it is updated
+            clearAnimData();
+            document.getElementById("dataArea").classList.add("sent");
+            animData = setTimeout(() => {
+                document.getElementById("dataArea").classList.remove("sent");
+            }, 1000);
         })
         .catch(error => console.error('Error:', error));
 

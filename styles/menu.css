@@ -179,6 +179,10 @@ button {
     transition: all 0.4s;
 }
 
+#areaSection {
+    perspective: 500px;
+}
+
 .areaInput {
     width: 40%;
     margin: auto;
@@ -256,4 +260,58 @@ button {
 
 #qrcode {
     border: solid 4px white;
+}
+
+.sent {
+    animation: sendAnim 1s ease-in-out forwards;
+}
+
+.rcvd {
+    animation: recvAnim 0.42s ease-in-out forwards;
+}
+
+@keyframes sendAnim {
+    0% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1) rotateX(30deg) rotateY(20deg) rotateZ(40deg);
+    }
+    50% {
+        transform: scale(1) rotateX(40deg) rotateY(10deg) rotateZ(20deg) scaleY(1.5);
+    }
+
+    75% {
+        transform: scale(0) rotateX(40deg) rotateY(10deg) rotateZ(20deg) scaleY(3) translateY(-1000px);
+    }
+
+    76% {
+        transform: scale(0) rotateX(-1080deg);
+    }
+    77% {
+        transform: scale(1) rotateX(-360deg);
+    }
+
+    100% {
+        transform: scale(1) rotateX(0deg);
+    }
+}
+
+@keyframes recvAnim {
+    0% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1) rotateX(-4deg) rotateZ(4deg) scaleY(1.2);
+    }
+    50% {
+        transform: scale(1) rotateX(8deg) rotateZ(-4deg) scaleX(1.1);
+    }
+    75% {
+        transform: scale(1) rotateX(8deg) rotateZ(0deg) scaleX(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
