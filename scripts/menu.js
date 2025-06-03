@@ -137,16 +137,20 @@ function createCodeFromGITA(ret, mode, lang = 'en') {
         .catch(error => console.error('Error:', error));
 
 }
+const da = document.getElementById("dataArea")
+const ai = document.getElementById("areaInput")
+
+da.addEventListener(`focus`, () => da.select());
+ai.addEventListener(`focus`, () => ai.select());
 
 let animData;
 function clearAnimData() {
     clearTimeout(animData);
-    var el = document.getElementById("dataArea");
-    el.classList.remove("rcvd");
-    el.classList.remove("sent");
-    el.style.animation = 'none';
-    el.offsetHeight; /* trigger reflow */
-    el.style.animation = null;
+    da.classList.remove("rcvd");
+    da.classList.remove("sent");
+    da.style.animation = 'none';
+    da.offsetHeight; /* trigger reflow */
+    da.style.animation = null;
 }
 function pullFromGITA(ret, code) {
     if (code == '' || regex.test(code) == false) return setError("areaInputInfo", `"${code}" ${localSettings.lang == "fr" ? "ne ressemble pas à un code valide" : "doesn't look like a valid code"}`);
@@ -166,13 +170,13 @@ function pullFromGITA(ret, code) {
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
             //: SOMETHING
             clearAnimData();
-            document.getElementById("dataArea").classList.add("rcvd");
+            da.classList.add("rcvd");
             let value = decodeHTMLEntities(text)
             setTimeout(() => {
                 ret.value = value.startsWith("\n") ? value.slice(1) : value;
             }, 100)
             animData = setTimeout(() => {
-                document.getElementById("dataArea").classList.remove("rcvd");
+                da.classList.remove("rcvd");
             }, 1000);
         })
         .catch(error => console.error('Error:', error));
@@ -198,9 +202,9 @@ function pushToGITA(ret, area, content) {
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
             //TODO: SOMETHING like an animation to tell it is updated
             clearAnimData();
-            document.getElementById("dataArea").classList.add("sent");
+            da.classList.add("sent");
             animData = setTimeout(() => {
-                document.getElementById("dataArea").classList.remove("sent");
+                da.classList.remove("sent");
             }, 1000);
         })
         .catch(error => console.error('Error:', error));
