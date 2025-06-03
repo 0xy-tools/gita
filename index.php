@@ -249,20 +249,6 @@ if (isset($_REQUEST["pull"]) && checkValidCode(htmlspecialchars($_REQUEST["pull"
         optEcho("GITA ERROR: " . htmlspecialchars($_REQUEST["pull"]) . " is not a valid area!");
 }
 
-
-// AUTOMATIC CLIPBOARD \\
-
-// create or paste easy clipboard
-// if (isset($_REQUEST["e"]) && checkValidValue(htmlspecialchars($_REQUEST["e"]))) {
-//     if (checkValidCodeSilent(htmlspecialchars($_REQUEST["e"]))) {
-//         if (pasting(htmlspecialchars($_REQUEST["e"])) == 1)
-//             createArea(htmlspecialchars($_REQUEST["e"]));
-//     } else
-//         createArea(htmlspecialchars($_REQUEST["e"]));
-// }
-
-// POST ANSWERS \\
-
 // basic pong
 if (isset($_REQUEST["ping"])) {
     optEcho("pong!");
@@ -289,6 +275,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
         <title>GITA</title>
 
         <meta name="author" content="MagicTINTIN">
+        <meta property="og:site_name" content="0xy.fr">
         <meta name="description" content="GITA is a service/browser extension that allows you to copy and paste text between your different devices.\nSimple and fast to use, no sign-up or account required.">
 
         <link rel="icon" type="image/x-icon" href="images/favicon.png">

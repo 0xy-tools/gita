@@ -79,7 +79,7 @@ function showQRcode(obj, rawValue, isCode = false) {
     // console.log(value);
     if (obj != null)
         obj.value = value;
-    lastCode = value;
+    // lastCode = value;
     // navigator.clipboard.writeText(value);
     if (isCode) {
         document.getElementById("qrcode").innerHTML = "";
@@ -200,7 +200,6 @@ function pushToGITA(ret, area, content) {
         .then(text => {
             // console.log(response);
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
-            //TODO: SOMETHING like an animation to tell it is updated
             clearAnimData();
             da.classList.add("sent");
             animData = setTimeout(() => {
@@ -213,9 +212,9 @@ function pushToGITA(ret, area, content) {
 
 
 function openFromGITA(ret, areaCode, lang = 'en') {
-    if (areaCode == lastAreaRequest) return ret.value = lastCode;
+    // if (areaCode == lastAreaRequest) return ret.value = lastCode;
     if (areaCode == '' || areaCode.length > MAX_CODE_LENGTH) return setError("areaInputInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
-    lastAreaRequest = areaCode;
+    // lastAreaRequest = areaCode;
 
     fetch(`./index.php`, {
         method: 'POST',
