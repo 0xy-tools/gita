@@ -92,8 +92,8 @@ function showQRcode(obj, rawValue, isCode = false) {
 function createCodeFromGITA(ret, mode, lang = 'en') {
     // if (content == lastStringRequest) ret.value = lastCode;
     if (mode == '') setError("dataArea", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
-    if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("dataArea", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
-    lastStringRequest = content;
+    // if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("dataArea", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
+    // lastStringRequest = content;
 
     fetch(`./index.php`, {
         method: 'POST',
@@ -144,7 +144,7 @@ function pullFromGITA(ret, code) {
 }
 
 function pushToGITA(ret, area, content) {
-    if (content == '' || content.length > MAX_LENGTH) return setError("dataAreaInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
+    if (content.length > MAX_LENGTH) return setError("dataAreaInfo", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
 
     fetch(`./index.php`, {
         method: 'POST',
