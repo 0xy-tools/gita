@@ -127,8 +127,6 @@ if (isset($_REQUEST["create"]) && checkValidValue(htmlspecialchars($_REQUEST["cr
 
 // push
 if (isset($_REQUEST["a"]) && isset($_REQUEST["push"]) && checkValidValue(htmlspecialchars($_REQUEST["push"]))) {
-    // TODO: UPDATE
-    // createArea(htmlspecialchars($_REQUEST["push"]));
     $newValue = htmlspecialchars($_REQUEST["push"]);
     $code = htmlspecialchars($_REQUEST["a"]);
     $gitaStatement = $db->prepare('SELECT ID FROM gita WHERE code = :code');
@@ -156,47 +154,8 @@ if (isset($_REQUEST["a"]) && isset($_REQUEST["push"]) && checkValidValue(htmlspe
     }
 }
 
-/*
-// aggregate clipboard
-if (isset($_REQUEST["a"]) && checkValidValue(htmlspecialchars($_REQUEST["a"]))) {
-    $split = explode(':', htmlspecialchars($_REQUEST["a"]), 2);
-    $code = $split[0];
-    $agg = $split[1];
 
-    $gitaStatement = $db->prepare('SELECT * FROM gita WHERE code = :code');
-    $gitaStatement->execute([
-        'code' => htmlspecialchars($code)
-    ]);
-
-    $codes = $gitaStatement->fetchAll();
-    if (sizeof($codes) == 0) {
-        optEcho("GITA ERROR: " . htmlspecialchars($code) . " is not a valid clipboard!");
-        exit;
-    }
-
-    if (strpos($codes[0]["info"], "const") !== false) {
-        optEcho("GITA ERROR: " . htmlspecialchars($code) . " is not editable!");
-        exit;
-    }
-    $sqlQuery = 'UPDATE gita SET date = current_timestamp(), value = :value WHERE code = :code';
-
-    $newValue = $codes[0]["value"] . $agg;
-
-    if (strlen($newValue) > 60000) {
-        optEcho("GITA ERROR: Clipboard can not be longer than 60000 chars. " . htmlspecialchars($code) . " has not been updated.");
-        exit;
-    }
-    $updateGita = $db->prepare($sqlQuery);
-    $updateGita->execute([
-        'code' => $code,
-        'value' => $newValue
-    ]);
-    optEcho($updateGita->rowCount());
-}
-    */
-
-
-// DELETE CLIPBOARD \\
+// DELETE AREA \\
 
 function deleteClipboard(string $code): void
 {
@@ -208,7 +167,7 @@ function deleteClipboard(string $code): void
     ]);
 }
 
-// manually delete clipboard
+// manually delete area
 if (isset($_REQUEST["d"]) && checkValidCode(htmlspecialchars($_REQUEST["d"]))) {
     $gitaStatement = $db->prepare('SELECT ID FROM gita WHERE code = :code');
     $gitaStatement->execute([
@@ -276,13 +235,13 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
 
         <meta name="author" content="MagicTINTIN">
         <meta property="og:site_name" content="0xy.fr">
-        <meta name="description" content="GITA is a service/browser extension that allows you to copy and paste text between your different devices.\nSimple and fast to use, no sign-up or account required.">
+        <meta name="description" content="GITA is a web service that allows you to share text between your different devices. Simple and fast to use, no sign-up or account required.">
 
         <link rel="icon" type="image/x-icon" href="images/favicon.png">
 
         <meta property="og:type" content="website" />
         <meta property="og:title" content="GITA">
-        <meta property="og:description" content="GITA is a service/browser extension that allows you to copy and paste text between your different devices.\nSimple and fast to use, no sign-up or account required.">
+        <meta property="og:description" content="GITA is a web service that allows you to share text between your different devices. Simple and fast to use, no sign-up or account required.">
 
         <meta property="og:image" content="https://gita.0xy.fr/images/favicon.png">
         <meta property="og:image:type" content="image/png">
