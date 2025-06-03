@@ -89,6 +89,21 @@ function showQRcode(obj, rawValue, isCode = false) {
     }
 }
 
+document.getElementById("loadStoreButtons").style.display = "none";
+document.getElementById("loadStoreButtons").style.transform = "scale(0)";
+function switchAreaSection() {
+    document.getElementById("loadStoreButtons").style.display = "flex";
+    document.getElementById("createAreaButton").style.transform = "scale(0)";
+    document.getElementById("createAreaButton").style.marginTop = "0";
+    document.getElementById("dataArea").style.transform = "scale(1)";
+    setTimeout(() => {
+        document.getElementById("loadStoreButtons").style.transform = "scale(1)";
+    }, 400);
+    // setTimeout(() => {
+    //     document.getElementById("createAreaButton").style.display = "none";
+    // }, 400);
+}
+
 function createCodeFromGITA(ret, mode, lang = 'en') {
     // if (content == lastStringRequest) ret.value = lastCode;
     if (mode == '') setError("dataArea", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
@@ -111,9 +126,13 @@ function createCodeFromGITA(ret, mode, lang = 'en') {
         .then(response => response.text())
         .then(text => {
             // console.log(text);
-            if (regex.test(text.startsWith("\n") ? text.slice(1) : text))
+            if (regex.test(text.startsWith("\n") ? text.slice(1) : text)) {
                 showQRcode(ret, text.startsWith("\n") ? text.slice(1) : text, true);
-            document.getElementById("dataArea").style.transform = "scale(1)";
+                switchAreaSection();
+            } else {
+                // switchAreaSection();
+
+            }
         })
         .catch(error => console.error('Error:', error));
 
@@ -137,7 +156,6 @@ function pullFromGITA(ret, code) {
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
             //: SOMETHING
             ret.value = text.startsWith("\n") ? text.slice(1) : text;
-            document.getElementById("dataArea").style.transform = "scale(1)";
         })
         .catch(error => console.error('Error:', error));
 
@@ -189,7 +207,7 @@ function openFromGITA(ret, areaCode, lang = 'en') {
             // console.log(text);
             // FIXME: true error and no qrcode when wrong area //text.startsWith("\n") ? text.slice(1) : text
             showQRcode(ret, areaCode, true);
-            document.getElementById("dataArea").style.transform = "scale(1)";
+            switchAreaSection();
         })
         .catch(error => console.error('Error:', error));
 }

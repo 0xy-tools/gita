@@ -351,9 +351,9 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
 
                 <div class="btnCentering"><button tabindex="-1" class="ebtn" id="openAButton">Open area</button></div>
 
-                <div class="btnCentering createMarginTop"><button tabindex="-1" class="ebtn" id="createAButton">Create area</button></div>
+                <div class="btnCentering createMarginTop" id="createAreaButton"><button tabindex="-1" class="ebtn" id="createAButton">Create area</button></div>
 
-                <div class="btnCenteringForce">
+                <div class="btnCenteringForce" id="loadStoreButtons">
                     <button tabindex="-1" class="tbtn cbtn" id="lButton">Load ↓</button>
                     <button tabindex="-1" class="tbtn pbtn" id="sButton">Store ↑</button>
                 </div>
