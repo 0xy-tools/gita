@@ -155,7 +155,8 @@ function pullFromGITA(ret, code) {
             // console.log(response);
             // updateAndClipboardCopy(ret, text.startsWith("\n") ? text.slice(1) : text);
             //: SOMETHING
-            ret.value = text.startsWith("\n") ? text.slice(1) : text;
+            let value = decodeHTMLEntities(text)
+            ret.value = value.startsWith("\n") ? value.slice(1) : value;
         })
         .catch(error => console.error('Error:', error));
 
@@ -206,7 +207,9 @@ function openFromGITA(ret, areaCode, lang = 'en') {
         .then(text => {
             // console.log(text);
             // FIXME: true error and no qrcode when wrong area //text.startsWith("\n") ? text.slice(1) : text
-            showQRcode(ret, areaCode, true);
+            showQRcode(null, areaCode, true);
+            let value = decodeHTMLEntities(text)
+            ret.value = value.startsWith("\n") ? value.slice(1) : value;
             switchAreaSection();
         })
         .catch(error => console.error('Error:', error));

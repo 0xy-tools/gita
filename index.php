@@ -29,15 +29,18 @@ function checkValidCode(string $str): bool
 
 function checkValidValue(string $str): bool
 {
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $val = false;
-        if (!$val) optEcho("GITA ERROR [GET]: GET request method is not supported by GITA");
-        return $val;
-    } else {
-        $val = strlen($str) <= 60000;
-        if (!$val) optEcho("GITA ERROR [POST]: Value is not in a valid format (max length = 60000)");
-        return $val;
-    }
+    // if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    //     $val = false;
+    //     if (!$val) optEcho("GITA ERROR [GET]: GET request method is not supported by GITA");
+    //     return $val;
+    // } else {
+    //     $val = strlen($str) <= 60000;
+    //     if (!$val) optEcho("GITA ERROR [POST]: Value is not in a valid format (max length = 60000)");
+    //     return $val;
+    // }
+    $val = strlen($str) <= 60000;
+    if (!$val) optEcho("GITA ERROR [POST]: Value is not in a valid format (max length = 60000)");
+    return $val;
 }
 
 
@@ -123,9 +126,34 @@ if (isset($_REQUEST["create"]) && checkValidValue(htmlspecialchars($_REQUEST["cr
 }
 
 // push
-if (isset($_REQUEST["push"]) && checkValidValue(htmlspecialchars($_REQUEST["push"]))) {
+if (isset($_REQUEST["a"]) && isset($_REQUEST["push"]) && checkValidValue(htmlspecialchars($_REQUEST["push"]))) {
     // TODO: UPDATE
-    createArea(htmlspecialchars($_REQUEST["push"]));
+    // createArea(htmlspecialchars($_REQUEST["push"]));
+    $newValue = htmlspecialchars($_REQUEST["push"]);
+    $code = htmlspecialchars($_REQUEST["a"]);
+    $gitaStatement = $db->prepare('SELECT ID FROM gita WHERE code = :code');
+    $gitaStatement->execute([
+        'code' => $code
+    ]);
+
+    $codes = $gitaStatement->fetchAll();
+    if (sizeof($codes) == 0)
+        optEcho("GITA ERROR: " . $code . " is not a valid area!");
+    else {
+        optEcho("Ok.");
+        // deleteClipboard(htmlspecialchars($_REQUEST["d"]));
+        if (strlen($newValue) > 60000) {
+            optEcho("GITA ERROR: Clipboard can not be longer than 60000 chars. " . htmlspecialchars($code) . " has not been updated.");
+            exit;
+        }
+        $sqlQuery = 'UPDATE gita SET date = current_timestamp(), value = :value WHERE code = :code';
+        $updateGita = $db->prepare($sqlQuery);
+        $updateGita->execute([
+            'code' => $code,
+            'value' => $newValue
+        ]);
+        optEcho($updateGita->rowCount());
+    }
 }
 
 /*
@@ -281,7 +309,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "name": "GITA",
-                "alternateName" : ["gita","global internet text area","g0xy", "Global Internet Text Area"],
+                "alternateName": ["gita", "global internet text area", "g0xy", "Global Internet Text Area"],
                 "url": "https://gita.0xy.fr/",
                 "inLanguage": "en",
                 "isAccessibleForFree": "true",
@@ -297,7 +325,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                 "@context": "https://schema.org",
                 "@type": "WebSite",
                 "name": "GITA",
-                "alternateName" : ["gita","global internet text area","g0xy", "Global Internet Text Area"],
+                "alternateName": ["gita", "global internet text area", "g0xy", "Global Internet Text Area"],
                 "url": "https://gita.0xy.fr/",
                 "inLanguage": "fr",
                 "isAccessibleForFree": "true",
@@ -313,7 +341,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                 "@context": "https://schema.org",
                 "@type": "SoftwareApplication",
                 "name": "GITA",
-                "applicationSuite":"0xy",
+                "applicationSuite": "0xy",
                 "applicationCategory": "UtilitiesApplication",
                 "featureList": "GITA is a web service that allows you to share text between your different devices.\nSimple and fast to use, no sign-up or account required.",
                 "url": "https://gita.0xy.fr/",
