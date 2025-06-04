@@ -34,12 +34,12 @@ function checkValidValue(string $str): bool
     //     if (!$val) optEcho("GITA ERROR [GET]: GET request method is not supported by GITA");
     //     return $val;
     // } else {
-    //     $val = strlen($str) <= 60000;
-    //     if (!$val) optEcho("GITA ERROR [POST]: Value is not in a valid format (max length = 60000)");
+    //     $val = strlen($str) <= 300000;
+    //     if (!$val) optEcho("GITA ERROR [POST]: Value is not in a valid format (max length = 300000)");
     //     return $val;
     // }
-    $val = strlen($str) <= 60000;
-    if (!$val) optEcho("GITA ERROR [POST]: Value is not in a valid format (max length = 60000)");
+    $val = strlen($str) <= 300000;
+    if (!$val) optEcho("GITA ERROR [POST]: Value is not in a valid format (max length = 300000)");
     return $val;
 }
 
@@ -140,8 +140,8 @@ if (isset($_REQUEST["a"]) && isset($_REQUEST["push"]) && checkValidValue(htmlspe
     else {
         optEcho("Ok.");
         // deleteClipboard(htmlspecialchars($_REQUEST["d"]));
-        if (strlen($newValue) > 60000) {
-            optEcho("GITA ERROR: Clipboard can not be longer than 60000 chars. " . htmlspecialchars($code) . " has not been updated.");
+        if (strlen($newValue) > 300000) {
+            optEcho("GITA ERROR: Clipboard can not be longer than 300000 chars. " . htmlspecialchars($code) . " has not been updated.");
             exit;
         }
         $sqlQuery = 'UPDATE gita SET date = current_timestamp(), value = :value WHERE code = :code';

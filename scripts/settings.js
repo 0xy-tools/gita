@@ -1,4 +1,4 @@
-const MAX_LENGTH = 60000;
+const MAX_LENGTH = 300000;
 const MAX_CODE_LENGTH = 20;
 
 function home() {
