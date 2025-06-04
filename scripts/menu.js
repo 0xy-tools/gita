@@ -318,7 +318,7 @@ areaInput.addEventListener("keydown", function (e) {
 
     if (e.key === "Enter") {
         if (ctrlPressed)
-            document.getElementById("aButton").click();
+            document.getElementById("openAButton").click();
     } else if (e.key === "Control") {
         ctrlPressed = true;
     }
