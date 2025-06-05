@@ -104,6 +104,9 @@ function switchAreaSection() {
     // }, 400);
 }
 
+const da = document.getElementById("dataArea")
+const ai = document.getElementById("areaInput")
+
 function createCodeFromGITA(ret, mode, lang = 'en') {
     // if (content == lastStringRequest) ret.value = lastCode;
     if (mode == '') setError("dataArea", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
@@ -128,6 +131,8 @@ function createCodeFromGITA(ret, mode, lang = 'en') {
             // console.log(text);
             if (regex.test(text.startsWith("\n") ? text.slice(1) : text)) {
                 showQRcode(ret, text.startsWith("\n") ? text.slice(1) : text, true);
+                // da.innerHTML = "";
+                da.value = "";
                 switchAreaSection();
             } else {
                 // switchAreaSection();
@@ -137,8 +142,6 @@ function createCodeFromGITA(ret, mode, lang = 'en') {
         .catch(error => console.error('Error:', error));
 
 }
-const da = document.getElementById("dataArea")
-const ai = document.getElementById("areaInput")
 
 da.addEventListener(`focus`, () => da.select());
 ai.addEventListener(`focus`, () => ai.select());
