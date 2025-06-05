@@ -107,9 +107,9 @@ function switchAreaSection() {
 const da = document.getElementById("dataArea")
 const ai = document.getElementById("areaInput")
 
-function createCodeFromGITA(ret, mode, lang = 'en') {
+function createCodeFromGITA(ret, lang = 'en') {
     // if (content == lastStringRequest) ret.value = lastCode;
-    if (mode == '') setError("dataArea", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
+    // if (mode == '') setError("dataArea", `${localSettings.lang == "fr" ? "Erreur interne" : "Internal error"} :/`);
     // if (content == '' || content.length > INPUT_MAX_LENGTH) return setError("dataArea", `${localSettings.lang == "fr" ? "Longueur maximale : " : "Max length: "} ${INPUT_MAX_LENGTH} !`);
     // lastStringRequest = content;
 

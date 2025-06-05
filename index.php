@@ -191,6 +191,9 @@ function createArea(string $content, string $type = ""): void
             $codeGen = true;
     }
 
+    // if (isset($_REQUEST["l"]))
+    // $codeVal = htmlspecialchars($_REQUEST["l"]) . substr($codeVal,2);
+
     $sqlQuery = 'INSERT INTO gita(info, type, code, value) VALUES (:info, :type, :code, :value)';
 
     $insertGita = $db->prepare($sqlQuery);
