@@ -102,26 +102,25 @@ function updateStatPull($code, $reqType): void
 {
     global $db;
     // code, app, lang, cPushGet, cPushPost, pPullGet, pPullPost, cPushExt, cPushUIMode, pPullExt, pPullUIMode, durationMode, createdAt, lastPPullAt, feedback, maxSize, totalSize
-    $idQuery = 'SELECT ID, maxSize FROM stats WHERE code = :code ORDER BY ID DESC LIMIT 1';
+    $idQuery = 'SELECT ID FROM stats WHERE code = :code ORDER BY ID DESC LIMIT 1';
     $stmt = $db->prepare($idQuery);
     $stmt->execute(['code' => $code]);
     $lastRow = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($lastRow) {
         $ID = $lastRow['ID'];
-        $maxSize = $lastRow['maxSize'];
 
         $updateQuery = '
             UPDATE stats
             SET pPullPost = pPullPost + 1,
-                lastPPullAt = current_timestamp(),
+                lastPPullAt = current_timestamp()
             WHERE ID = :ID
         ';
         if ($reqType === 'GET')
             $updateQuery = '
             UPDATE stats
             SET pPullGet = pPullGet + 1,
-                lastPPullAt = current_timestamp(),
+                lastPPullAt = current_timestamp()
             WHERE ID = :ID
         ';
 
@@ -204,6 +203,11 @@ function createArea(string $content, string $type = ""): void
         'value' => $content,
         'code' => $codeVal
     ]);
+
+    $statL = 0;
+    if (isset($_REQUEST["l"]) && htmlspecialchars($_REQUEST["l"]) == "fr")
+        $statL = 1;
+    createStat($codeVal, $statL, $type);
     optEcho($codeVal);
     exit;
 }
@@ -226,18 +230,19 @@ if (isset($_REQUEST["a"]) && isset($_REQUEST["push"]) && checkValidValue(htmlspe
     if (sizeof($codes) == 0)
         optEcho("GITA ERROR: " . $code . " is not a valid area!");
     else {
-        optEcho("Ok.");
         // deleteClipboard(htmlspecialchars($_REQUEST["d"]));
         if (strlen($newValue) > 300000) {
             optEcho("GITA ERROR: Clipboard can not be longer than 300000 chars. " . htmlspecialchars($code) . " has not been updated.");
             exit;
         }
+        optEcho("Ok.");
         $sqlQuery = 'UPDATE gita SET date = current_timestamp(), value = :value WHERE code = :code';
         $updateGita = $db->prepare($sqlQuery);
         $updateGita->execute([
             'code' => $code,
             'value' => $newValue
         ]);
+        updateStatPush($code, strlen($newValue), $_SERVER['REQUEST_METHOD']);
         optEcho($updateGita->rowCount());
     }
 }
@@ -286,6 +291,7 @@ function pasting(string $input): int
     if (sizeof($codes) == 0) {
         return 1;
     } else {
+        updateStatPull($input, $_SERVER['REQUEST_METHOD']);
         optEcho($codes[0]["value"]);
         return 0;
     }
