@@ -43,6 +43,94 @@ function checkValidValue(string $str): bool
     return $val;
 }
 
+function createStat($code, $lang, $durationMode): void
+{
+    global $db;
+    $now = date("Y-m-d H:i:s");
+    // code, app, lang, cPushGet, cPushPost, pPullGet, pPullPost, cPushExt, cPushUIMode, pPullExt, pPullUIMode, durationMode, createdAt, lastPPullAt, feedback, maxSize, totalSize
+    $sqlQuery = 'INSERT INTO stats(code, app, lang, durationMode, createdAt, maxSize, totalSize) VALUES (:code, 2, :lang, :durationMode, :createdAt, 0, 0)';
+
+    $insertStats = $db->prepare($sqlQuery);
+    $insertStats->execute([
+        'code' => $code,
+        'lang' => $lang,
+        'durationMode' => $durationMode,
+        'createdAt' => $now
+    ]);
+}
+
+function updateStatPush($code, $currentSize, $reqType): void
+{
+    global $db;
+    $now = date("Y-m-d H:i:s");
+    // code, app, lang, cPushGet, cPushPost, pPullGet, pPullPost, cPushExt, cPushUIMode, pPullExt, pPullUIMode, durationMode, createdAt, lastPPullAt, feedback, maxSize, totalSize
+    $idQuery = 'SELECT ID, maxSize FROM stats WHERE code = :code ORDER BY ID DESC LIMIT 1';
+    $stmt = $db->prepare($idQuery);
+    $stmt->execute(['code' => $code]);
+    $lastRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($lastRow) {
+        $ID = $lastRow['ID'];
+        $maxSize = $lastRow['maxSize'];
+
+        $updateQuery = '
+            UPDATE stats
+            SET cPushPost = cPushPost + 1,
+                maxSize = :maxSize,
+                totalSize = totalSize + :currentSize
+            WHERE ID = :ID
+        ';
+        if ($reqType === 'GET')
+            $updateQuery = '
+            UPDATE stats
+            SET cPushGet = cPushGet + 1,
+                maxSize = :maxSize
+                totalSize = totalSize + :currentSize
+            WHERE ID = :ID
+        ';
+
+        $updateStmt = $db->prepare($updateQuery);
+        $updateStmt->execute([
+            'currentSize' => $currentSize,
+            'maxSize' => max($currentSize, $maxSize),
+            'ID' => $ID
+        ]);
+    }
+}
+
+function updateStatPull($code, $reqType): void
+{
+    global $db;
+    // code, app, lang, cPushGet, cPushPost, pPullGet, pPullPost, cPushExt, cPushUIMode, pPullExt, pPullUIMode, durationMode, createdAt, lastPPullAt, feedback, maxSize, totalSize
+    $idQuery = 'SELECT ID, maxSize FROM stats WHERE code = :code ORDER BY ID DESC LIMIT 1';
+    $stmt = $db->prepare($idQuery);
+    $stmt->execute(['code' => $code]);
+    $lastRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($lastRow) {
+        $ID = $lastRow['ID'];
+        $maxSize = $lastRow['maxSize'];
+
+        $updateQuery = '
+            UPDATE stats
+            SET pPullPost = pPullPost + 1,
+                lastPPullAt = current_timestamp(),
+            WHERE ID = :ID
+        ';
+        if ($reqType === 'GET')
+            $updateQuery = '
+            UPDATE stats
+            SET pPullGet = pPullGet + 1,
+                lastPPullAt = current_timestamp(),
+            WHERE ID = :ID
+        ';
+
+        $updateStmt = $db->prepare($updateQuery);
+        $updateStmt->execute([
+            'ID' => $ID
+        ]);
+    }
+}
 
 function passiveClean(): void
 {
