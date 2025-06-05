@@ -136,13 +136,10 @@ function passiveClean(): void
     global $db;
 
     // delete normal
-    $gitaStatement = $db->prepare('DELETE FROM gita WHERE type=:type AND date < DATE_SUB(NOW(), INTERVAL 30 DAY_MINUTE)');
+    $gitaStatement = $db->prepare('DELETE FROM gita WHERE type=:type AND date < DATE_SUB(NOW(), INTERVAL 2 DAY_HOUR)');
     $gitaStatement->execute(['type' => '']);
-    // delete unique
-    $gitaStatement = $db->prepare('DELETE FROM gita WHERE type=:type AND date < DATE_SUB(NOW(), INTERVAL 30 DAY_MINUTE)');
-    $gitaStatement->execute(['type' => 'u']);
     // delete short life
-    $gitaStatement = $db->prepare('DELETE FROM gita WHERE type=:type AND date < DATE_SUB(NOW(), INTERVAL 5 DAY_MINUTE)');
+    $gitaStatement = $db->prepare('DELETE FROM gita WHERE type=:type AND date < DATE_SUB(NOW(), INTERVAL 30 DAY_MINUTE)');
     $gitaStatement->execute(['type' => 's']);
     // delete long life
     $gitaStatement = $db->prepare('DELETE FROM gita WHERE type=:type AND date < DATE_SUB(NOW(), INTERVAL 12 DAY_HOUR)');
@@ -443,7 +440,7 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                 </div>
                 <div class="settingsDiv">
                     <h6 id="deleteTitle">Delete after<br><span class='verysmall'>(inactivity)</span></h6>
-                    <span class="settingButton spanButton" id="settingTimeDelete">30min</span>
+                    <span class="settingButton spanButton" id="settingTimeDelete">2h</span>
                 </div>
                 <div class="settingsDiv">
                     <h6>Instance</h6>

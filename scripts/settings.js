@@ -135,11 +135,11 @@ function updtLang() {
     //     document.getElementById("settingTimeDelete").innerHTML = (localSettings.lang == "fr" ? "Collage" : "Pasting") + "<br><span class='verysmall'>(30min max)</span>";
     // else 
     if (localSettings.type == "s")
-        document.getElementById("settingTimeDelete").innerHTML = "5min";
+        document.getElementById("settingTimeDelete").innerHTML = "30min";
     else if (localSettings.type == "l")
         document.getElementById("settingTimeDelete").innerHTML = "12h";
     else
-        document.getElementById("settingTimeDelete").innerHTML = "30min";
+        document.getElementById("settingTimeDelete").innerHTML = "2h";
 
     document.getElementById("saveSettings").innerHTML = localSettings.lang == "fr" ? "Enregistrer" : "Save";
 
