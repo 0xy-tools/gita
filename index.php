@@ -62,9 +62,8 @@ function createStat($code, $lang, $durationMode): void
 function updateStatPush($code, $currentSize, $reqType): void
 {
     global $db;
-    $now = date("Y-m-d H:i:s");
     // code, app, lang, cPushGet, cPushPost, pPullGet, pPullPost, cPushExt, cPushUIMode, pPullExt, pPullUIMode, durationMode, createdAt, lastPPullAt, feedback, maxSize, totalSize
-    $idQuery = 'SELECT ID, maxSize FROM stats WHERE code = :code ORDER BY ID DESC LIMIT 1';
+    $idQuery = 'SELECT ID, maxSize FROM stats WHERE code = :code AND app = 2 ORDER BY ID DESC LIMIT 1';
     $stmt = $db->prepare($idQuery);
     $stmt->execute(['code' => $code]);
     $lastRow = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -102,7 +101,7 @@ function updateStatPull($code, $reqType): void
 {
     global $db;
     // code, app, lang, cPushGet, cPushPost, pPullGet, pPullPost, cPushExt, cPushUIMode, pPullExt, pPullUIMode, durationMode, createdAt, lastPPullAt, feedback, maxSize, totalSize
-    $idQuery = 'SELECT ID FROM stats WHERE code = :code ORDER BY ID DESC LIMIT 1';
+    $idQuery = 'SELECT ID FROM stats WHERE code = :code AND app = 2 ORDER BY ID DESC LIMIT 1';
     $stmt = $db->prepare($idQuery);
     $stmt->execute(['code' => $code]);
     $lastRow = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -655,7 +654,9 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                     data is
                     transmitted to our server and temporarily stored for the duration chosen by the user (from immediate
                     deletion after pasting up to a maximum of 12 hours). Once this time has expired, the data is
-                    automatically deleted. We do not collect or retain any personal or sensitive information.<br>
+                    automatically deleted. We do not collect or retain any personal or sensitive information.
+                    Only some anonymous statistics like copy/paste numbers, size of the clipboard and dates are collected 
+                    in order to better understand how the service is used and to improve it.<br>
                     <br>
                     <h5>Data Sharing</h5>
                     The data transmitted through the extension is not shared with any third parties. It is strictly used to
@@ -686,7 +687,9 @@ if (isset($_REQUEST["qr"]) || (!isset($_REQUEST["create"]) && !isset($_REQUEST["
                     données copiées sont transmises à notre serveur uniquement pour être temporairement stockées pendant la
                     durée choisie par l'utilisateur (allant de suppression immédiate après collage jusqu'à un maximum de 12
                     heures). Une fois ce délai expiré, les données sont automatiquement supprimées. Nous ne collectons ni ne
-                    conservons d'informations personnelles ou sensibles.<br>
+                    conservons d'informations personnelles ou sensibles.
+                    Uniquement quelques statistiques anonumes comme le nombre de copier/coller, la taille du presse-papier 
+                    et les dates sont collectées dans le but de comprendre comment le service est utilisé et pour l'améliorer.<br>
                     <br>
                     <h5>Partage des données</h5>
                     Les données transmises via l'extension ne sont partagées avec aucune tierce partie. Elles sont
